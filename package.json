@@ -1,0 +1,23 @@
+{
+  "name": "darwin-selection",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hussein-aitlahcen/darwin-selection.git"
+  },
+  "author": "Thierry Girard, Amine Ismail, Mathilde Prevost, Hussein Ait-Lahcen",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/hussein-aitlahcen/darwin-selection/issues"
+  },
+  "homepage": "https://github.com/hussein-aitlahcen/darwin-selection#readme",
+  "dependencies": {
+    "express": "^4.15.3",
+    "socket.io": "^2.0.1"
+  }
+}
