@@ -19,6 +19,7 @@
     "homepage": "https://github.com/hussein-aitlahcen/darwin-selection#readme",
     "dependencies": {
         "express": "^4.15.3",
+        "mongoose": "^4.10.1",
         "socket.io": "^2.0.1"
     },
     "devDependencies": {
