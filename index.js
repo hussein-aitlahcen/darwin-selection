@@ -6,10 +6,6 @@ var db = require('./db');
 
 db.connection.once('open', function() {
     console.log('sucessfully connected to database');
-    var answer = new db.Answer({ id: 0, description: 'Jacques Chirac' });
-    answer.save(function(error, doc) {
-        console.log("saved object:" + doc);
-    });
 });
 
 server.listen(8080);
