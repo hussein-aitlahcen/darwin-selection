@@ -4,7 +4,7 @@
     "description": "",
     "main": "index.js",
     "scripts": {
-        "build": "babel public -d public",
+        "build": "babel --plugins transform-react-jsx public -d public",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "repository": {
