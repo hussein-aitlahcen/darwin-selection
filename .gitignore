@@ -1,3 +1,7 @@
+# Project custom
+misc/converted/*
+misc/output/*
+
 # VSCODE
 .vscode/*.sql
 
