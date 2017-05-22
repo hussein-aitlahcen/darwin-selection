@@ -1,27 +1,28 @@
 {
-    "name": "darwin-selection",
-    "version": "1.0.0",
-    "description": "",
-    "main": "index.js",
-    "scripts": {
-        "build": "babel public -d public",
-        "test": "echo \"Error: no test specified\" && exit 1"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/hussein-aitlahcen/darwin-selection.git"
-    },
-    "author": "Thierry Girard, Amine Ismail, Mathilde Prevost, Hussein Ait-Lahcen",
-    "license": "ISC",
-    "bugs": {
-        "url": "https://github.com/hussein-aitlahcen/darwin-selection/issues"
-    },
-    "homepage": "https://github.com/hussein-aitlahcen/darwin-selection#readme",
-    "dependencies": {
-        "express": "^4.15.3",
-        "socket.io": "^2.0.1"
-    },
-    "devDependencies": {
-        "babel-cli": "^6.24.1"
-    }
+  "name": "darwin-selection",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "babel public -d public",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hussein-aitlahcen/darwin-selection.git"
+  },
+  "author": "Thierry Girard, Amine Ismail, Mathilde Prevost, Hussein Ait-Lahcen",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/hussein-aitlahcen/darwin-selection/issues"
+  },
+  "homepage": "https://github.com/hussein-aitlahcen/darwin-selection#readme",
+  "dependencies": {
+    "express": "^4.15.3",
+    "mongoose": "^4.10.1",
+    "socket.io": "^2.0.1"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.24.1"
+  }
 }
