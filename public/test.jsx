@@ -1,3 +1,57 @@
+var connected = false;
+
+var QuizzFrame = React.createClass({
+    
+    render() {
+        return (<div></div>
+        );
+    }
+
+});
+
+var UserList = React.createClass({
+
+    updateUserList(){
+        
+    },
+
+    render() {
+        return (
+
+        );
+    }
+
+});
+
+var LobbyInfo = React.createClass({
+    render() {
+        return (<div></div>    
+        );
+    }
+
+});
+
+
+var Game = React.createClass({
+
+    componentDidMount() {
+        socket.on('SMSG_PLAYERS_LIST',this._updatePlayerList);
+        socket.on('SMSG_ACK_NICKNAME',this._updateView);
+    },
+
+    _updatePlayerList(data){
+        var players = data;
+        this.setState({players});
+    },
+
+    render() {
+        return (<div></div>    
+        );
+    }
+
+});
+
+
 var ConnectForm = React.createClass({
 
     getInitialState() {
@@ -18,7 +72,7 @@ var ConnectForm = React.createClass({
 
         console.log("Sent message"+CMSG_NICKNAME+" "+this.state.name);
 
-        socket.on()
+        ReactDOM.render(<Game />, document.getElementById('react-app'));
     },  
 
     render() {
@@ -41,3 +95,4 @@ var ConnectForm = React.createClass({
 });
 
 ReactDOM.render(<ConnectForm />,document.getElementById('react-app'));
+    
