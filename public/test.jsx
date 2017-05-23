@@ -1,5 +1,3 @@
-var connected = false;
-
 var QuizzFrame = React.createClass({
     
     render() {
@@ -11,12 +9,17 @@ var QuizzFrame = React.createClass({
 
 var UserList = React.createClass({
 
-    updateUserList(){
-        
-    },
-
     render() {
-        return (<div></div>
+        return (
+            <div className='userList'>
+                {
+                    <ul>
+                       {this.props.players.map(function(user,i) {
+                            return <li key={i}>{user.nickname} {user.life}</li>;
+                       })}
+                    </ul>
+                }
+            </div>
 
         );
     }
@@ -75,7 +78,7 @@ var ConnectForm = React.createClass({
 var DarwinSelection = React.createClass({
 
     getInitialState() {
-         return {players : [], nickname :''};
+         return {players : [], nickname :'', loggedIn : false};
       },
 
     componentDidMount() {
@@ -89,25 +92,25 @@ var DarwinSelection = React.createClass({
     _updatePlayerList(data){
         var players = data;
         console.log('_updatePlayerList : '+JSON.stringify(players));
-        this.setState({players});
+        this.setState(players);
     },
 
     _updateConnectionState(data){
         var {id, nickname, life} = data;
         console.log('_updateConnectionState : '+JSON.stringify({id,nickname,life}));
-        this.setState({id, nickname, life})
+        this.setState({id, nickname, life, loggedIn : true})
     },
 
     _updateGameState(data){
         var gameState = data;
         console.log('_updateGameState : '+JSON.stringify(gameState));
-        this.setState({gameState});
+        this.setState(gameState);
     },
 
     _updateGameQuestion(data){
         var currentQuestion = data;
         console.log('_updateGameQuestion : '+JSON.stringify(currentQuestion));
-        this.setState({currentQuestion});   
+        this.setState(currentQuestion);   
     },
 
     _updatePlayerScore(data){
@@ -115,7 +118,7 @@ var DarwinSelection = React.createClass({
     },
 
     render() {
-        if(this.state.nickname=='')
+        if(!this.state.loggedIn)
         {
             return (
             <div>
@@ -127,7 +130,7 @@ var DarwinSelection = React.createClass({
         {
             return (
             <div>
-                <UserList />
+                <UserList players={this.state.players}/>
             </div>
             );
         }
