@@ -1,21 +1,33 @@
-var mongoose = require('mongoose');
+var mongoose = require('mongoose')
 
-mongoose.connect('mongodb://localhost/darwin');
+mongoose.connect('mongodb://localhost/darwin')
 
 var answerSchema = mongoose.Schema({
     id: Number,
     description: String
-});
+})
 
 var questionSchema = mongoose.Schema({
     id: Number,
     description: String,
     anecdote: String,
-    difficulty: Number,
+    difficulty: String,
     wiki: String,
     answers: [answerSchema]
-});
+})
 
-module.exports.Answer = mongoose.model('Answer', answerSchema);
-module.exports.Question = mongoose.model('Question', questionSchema);
-module.exports.connection = mongoose.connection;
+questionSchema.methods.getTimeoutFactor = function() {
+    switch (this.difficulty) {
+        case 'Débutant':
+            return 1
+
+        case 'Confirmé':
+            return 1.2
+
+        case 'Expert':
+            return 1.5
+    }
+}
+
+module.exports.Question = mongoose.model('Question', questionSchema)
+module.exports.connection = mongoose.connection

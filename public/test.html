@@ -1,0 +1,36 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>
+        Test WebSocket
+    </title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.1/socket.io.js"></script>
+    <script>
+        var socket = io();
+        socket.emit('client.nickname', {
+            nickname: 'ThiririThiri' 
+        });
+        socket.on('server.game.state.update', function(message) {
+            console.log('gamestate -> ' + message.state);
+        })
+        socket.on('server.game.question', function(message) {
+            console.log(message);
+        })
+        socket.on('error', console.error.bind(console));
+
+        function addMessage(message) {
+            var text = document.createTextNode(message),
+                el = document.createElement('li'),
+                messages = document.getElementById('messages');
+            el.appendChild(text);
+            messages.appendChild(el);
+        }
+    </script>
+</head>
+
+<body>
+    <ul id="messages"></ul>
+</body>
+
+</html>
