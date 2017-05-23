@@ -13,7 +13,16 @@
         });
         socket.on('server.game.state.update', function(message) {
             console.log('gamestate -> ' + message.state);
+        })  
+        socket.on('server.players.list', function(message) {
+            console.log(message.players);
         })
+        socket.on('server.nickname.ack', function(message) {
+            console.log(message.player);
+        })
+
+
+        
         socket.on('server.game.question', function(message) {
             console.log(message);
         })
