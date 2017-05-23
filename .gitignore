@@ -5,6 +5,9 @@ misc/output/*
 # VSCODE
 .vscode/*.sql
 
+# Compiled JS files
+public/*.js
+
 # Logs
 logs
 *.log
