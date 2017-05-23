@@ -1,5 +1,16 @@
-ReactDOM.render(React.createElement(
-  'h1',
+var test = React.createElement(
+  'div',
   null,
-  'Hello, world!'
-), document.getElementById('react-app'));
+  React.createElement(
+    'h1',
+    null,
+    'Hello, world!'
+  ),
+  React.createElement(
+    'p',
+    null,
+    ' coucou '
+  )
+);
+
+ReactDOM.render(test, document.getElementById('react-app'));
