@@ -11,11 +11,15 @@
         socket.emit('client.nickname', {
             nickname: 'ThiririThiri' 
         });
+        // on envoie la réponse
+        socket.emit('client.answerId', {
+            id: '0' 
+        });
         socket.on('server.game.state.update', function(message) {
             console.log('gamestate -> ' + message.state);
         })
         socket.on('server.game.question', function(message) {
-            console.log(message);
+            console.log(message.question.description);
         })
         socket.on('error', console.error.bind(console));
 
