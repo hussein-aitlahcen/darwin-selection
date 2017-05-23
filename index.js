@@ -13,10 +13,15 @@ var TIME_BEFORE_GAME_START = 2
 var MIN_PLAYERS_TO_PLAY = 3
 var PLAYER_DEFAULT_LIFE = 3
 var TIMEOUT_EPSILON = 1.1
+
 class Player {
     constructor(id, nickname) {
         this.id = id
         this.nickname = nickname
+        this.life = PLAYER_DEFAULT_LIFE
+    }
+
+    gameStart() {
         this.life = PLAYER_DEFAULT_LIFE
     }
 }
@@ -50,11 +55,12 @@ class Game {
         this.state = GAMESTATE_PLAYERS_WAITING
         this.core = createGame()
         this.clients = []
-        this.players = []
+        this.clientsPlaying = []
         this.timer = null
         this.nextPlayerId = 0
         this.questions = questions
         this.currentQuestion = null
+        this.currentAnswers = []
     }
 
     getNextId() {
@@ -69,7 +75,11 @@ class Game {
             that.playerJoin(client)
             client.on(net.CMSG_NICKNAME, function(message) {
                 console.log('client nickname received -> ' + message.nickname)
-                that.setNickname(client, message.nickname)
+                that.handleNicknameRequest(client, message.nickname)
+            })
+            client.on(net.CMSG_GAME_ANSWER, function(message) {
+                console.log('client answered')
+                that.handleAnswer(client, message.answerId)
             })
             client.on('disconnect', function() {
                 that.playerLeave(client)
@@ -113,11 +123,39 @@ class Game {
         io.sockets.emit(id, content)
     }
 
-    broadcastPlayerList() {
+    broadcastConnectedPlayers() {
         this.broadcast(net.SMSG_PLAYERS_LIST, {
-            players: this.clients.filter(c => c.player !== null).map(function(client){
-                return client.player
-            })
+            players: this.clients.filter(c => c.player !== null).map(c => c.player)
+        })
+    }
+
+    broadcastGamePlayersList() {
+        this.broadcast(net.SMSG_GAME_PLAYERS, {
+            players: this.clientsPlaying.map(c => c.player)
+        })
+    }
+
+    handleNicknameRequest(client, nickname) {
+        client.player = new Player(
+            this.getNextId(),
+            nickname
+        )
+        client.emit(net.SMSG_NICKNAME_ACK, { player: client.player })
+        this.broadcastConnectedPlayers()
+    }
+
+    isPlaying(client) {
+        return this.clientsPlaying.filter(c => c === client).length === 1
+    }
+
+    handleAnswer(client, answerId) {
+        if (!this.isPlaying(client)) {
+            console.log('received answer from unknow player: ' + client.player.nickname)
+            return
+        }
+        this.currentAnswers.push({
+            playerId: client.player.id,
+            answerId: answerId
         })
     }
 
@@ -141,22 +179,16 @@ class Game {
         console.log('client joined')
         client.player = null
         this.clients.push(client)
-        this.broadcastPlayerList()
-    }
-
-    setNickname(client, nickname){
-        client.player = new Player(
-            this.getNextId(),
-            nickname
-        )
-        client.emit(net.SMSG_NICKNAME_ACK,{player: client.player})
-        this.broadcastPlayerList()
+        this.broadcastConnectedPlayers()
+        client.emit(net.SMSG_GAME_STATE_UPDATE, {
+            state: this.state
+        })
     }
 
     playerLeave(client) {
         console.log('client left')
         this.clients = this.clients.filter(c => c !== client)
-        this.players = this.players.filter(c => c !== client)
+        this.clientsPlaying = this.clientsPlaying.filter(c => c !== client)
     }
 
     waitingPlayers() {
@@ -174,41 +206,85 @@ class Game {
         this.timer.update(dt)
         if (this.timer.expired) {
             this.timer = null
+            console.log('timer fired')
         }
     }
 
     gameStart() {
-        this.players.splice(0, this.players.length)
-        for (var i = 0; i < this.clients.length; i++) {
-            var client = this.clients[i]
-            if (client.player !== null) {
-                this.players.push(client)
-            }
-        }
+        console.log('game started')
+        this.clientsPlaying.splice(0, this.clientsPlaying.length)
+        this.clientsPlaying = this.clients.filter(c => c.player !== null)
+        this.clientsPlaying.forEach(function(client) {
+            client.player.gameStart()
+        }, this)
         this.goToGameState(GAMESTATE_TURN_BEGIN)
     }
 
-    turnBegin() {
+    resetTurn() {
+        this.currentAnswers = []
+    }
+
+    selectRandomQuestion() {
         var maxIndex = this.questions.length
         var questionIndex = Math.floor(Math.random() * maxIndex)
         this.currentQuestion = this.questions[questionIndex]
         this.questions.splice(questionIndex, 1)
+    }
+
+    computeAnswerTimeout() {
         var timeout = TIME_PER_QUESTION * this.currentQuestion.getTimeoutFactor()
         console.log('question timeout: ' + timeout)
         this.setTimer(timeout * TIMEOUT_EPSILON, GAMESTATE_TURN_END, function() {})
-        this.goToGameState(GAMESTATE_TURN_MIDDLE)
+        return timeout
+    }
+
+    turnBegin() {
+        this.resetTurn()
+        this.selectRandomQuestion()
+        var timeout = this.computeAnswerTimeout()
         this.broadcast(net.SMSG_GAME_QUESTION, {
             timeout: timeout,
             question: this.currentQuestion
         })
+        this.goToGameState(GAMESTATE_TURN_MIDDLE)
     }
 
     turnMiddle(dt) {
         this.updateTimer(dt)
+        if (this.currentAnswers.length === this.clientsPlaying.length) {
+            this.goToGameState(GAMESTATE_TURN_END)
+        }
+    }
+
+    computePlayersScore() {
+        var bonus = true
+        var clientThatAnswered = []
+        for (var i = 0; i < this.currentAnswers.length; i++) {
+            var answer = this.currentAnswers[i]
+            var client = this.clientsPlaying.find(c => c.player.id === answer.playerId)
+            clientThatAnswered.push(client)
+            if (answer.answerId === 0) {
+                if (bonus) {
+                    bonus = false
+                    client.player.life++
+                }
+            } else {
+                client.player.life--
+            }
+            console.log(client.player)
+        }
+        for (var i = 0; i < this.clientsPlaying.length; i++) {
+            var client = this.clientsPlaying[i]
+            if (clientThatAnswered.filter(c => c === client).length === 0) {
+                client.player.life--
+                    console.log(client.player)
+            }
+        }
     }
 
     turnEnd() {
-        var alivePlayers = this.players.filter(client => client.player.life > 0)
+        this.computePlayersScore()
+        var alivePlayers = this.clientsPlaying.filter(client => client.player.life > 0)
         if (alivePlayers.length > 1) {
             this.goToGameState(GAMESTATE_TURN_BEGIN)
         } else {
@@ -217,6 +293,7 @@ class Game {
     }
 
     gameEnd() {
+        console.log('game ended')
         this.goToGameState(GAMESTATE_PLAYERS_WAITING)
     }
 }
