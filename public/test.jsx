@@ -10,11 +10,16 @@ var ConnectForm = React.createClass({
 
     startConnection(e) {
         e.preventDefault();
-        var socket = io();
-        socket.emit('client.nickname', {
+
+        //Messages dans net.jsx
+        socket.emit(CMSG_NICKNAME, {
             nickname: this.state.name
         });
-    },
+
+        console.log("Sent message"+CMSG_NICKNAME+" "+this.state.name);
+
+        socket.on()
+    },  
 
     render() {
         return (
