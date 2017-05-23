@@ -12,7 +12,7 @@ var TIME_PER_QUESTION = 5
 var TIME_BEFORE_GAME_START = 2
 var MIN_PLAYERS_TO_PLAY = 3
 var PLAYER_DEFAULT_LIFE = 3
-
+var TIMEOUT_EPSILON = 1.1
 class Player {
     constructor(id, nickname) {
         this.id = id
@@ -69,10 +69,7 @@ class Game {
             that.playerJoin(client)
             client.on(net.CMSG_NICKNAME, function(message) {
                 console.log('client nickname received -> ' + message.nickname)
-                client.player = new Player(
-                    that.getNextId(),
-                    message.nickname
-                )
+                that.setNickname(client, message.nickname)
             })
             client.on('disconnect', function() {
                 that.playerLeave(client)
@@ -116,6 +113,14 @@ class Game {
         io.sockets.emit(id, content)
     }
 
+    broadcastPlayerList() {
+        this.broadcast(net.SMSG_PLAYERS_LIST, {
+            players: this.clients.filter(c => c.player !== null).map(function(client){
+                return client.player
+            })
+        })
+    }
+
     goToGameState(state) {
         this.state = state
         this.broadcast(net.SMSG_GAME_STATE_UPDATE, {
@@ -136,6 +141,16 @@ class Game {
         console.log('client joined')
         client.player = null
         this.clients.push(client)
+        this.broadcastPlayerList()
+    }
+
+    setNickname(client, nickname){
+        client.player = new Player(
+            this.getNextId(),
+            nickname
+        )
+        client.emit(net.SMSG_NICKNAME_ACK,{player: client.player})
+        this.broadcastPlayerList()
     }
 
     playerLeave(client) {
@@ -180,7 +195,7 @@ class Game {
         this.questions.splice(questionIndex, 1)
         var timeout = TIME_PER_QUESTION * this.currentQuestion.getTimeoutFactor()
         console.log('question timeout: ' + timeout)
-        this.setTimer(timeout, GAMESTATE_TURN_END, function() {})
+        this.setTimer(timeout * TIMEOUT_EPSILON, GAMESTATE_TURN_END, function() {})
         this.goToGameState(GAMESTATE_TURN_MIDDLE)
         this.broadcast(net.SMSG_GAME_QUESTION, {
             timeout: timeout,
