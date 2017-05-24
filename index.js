@@ -175,9 +175,8 @@ class Game {
     }
 
     handleChatMessage(client, message){
-        let chatName = client.player.getChatName()
         this.broadcast(net.SMSG_CHAT_MESSAGE, {
-            name: chatName,
+            player: client.player,
             content: message.content
         })
     }
@@ -325,6 +324,7 @@ class Game {
 
     turnEnd() {
         this.computePlayersScore()
+        this.broadcastGamePlayersList()
         var alivePlayers = this.clientsPlaying.filter(client => client.player.life > 0)
         if (alivePlayers.length > 1) {
             this.setTimer(TIME_BETWEEN_TURN, GAMESTATE_TURN_BEGIN, function(){})
