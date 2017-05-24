@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="UTF-8" />
+    <title>Darwin Selection</title>
+    <link rel="icon" type="image/png" href="logo.png" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+    <style>
+    .answer {
+      padding-bottom: 1rem; 
+      padding-top: 1rem;
+      margin-bottom: 0.5rem;
+      margin-top: 0.5rem;
+      width: 100%;
+      white-space: normal;
+    }
+    .question-description {
+      font-size: 1.75rem;
+      padding-bottom: 1.5rem;
+    }
+
+    .gold {
+      color:rgb(218,165,32);
+    }
+    .silver {
+      color:rgb(168,168,168);
+    }
+
+    .bronze {
+      color:rgb(150,90,56);
+    }    
+    </style>
+  </head>
+
+  <body>
+    <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+   
+    <div class="jumbotron text-center">
+      <h1>Darwin Selection</h1>
+    </div>
+
+    <div class="container-fluid">
+      <div class="row">
+
+        <!-- DEBUT LISTE DES JOUEURS -->
+        <div class="col col-md-2">
+          <ul class="list-group">
+            <li class="list-group-item"><small class="gold"><i class="fa fa-user" aria-hidden="true"></i> Joueur1 </small>&nbsp;<span class="badge badge-info badge-pill">3</span></li>
+            <li class="list-group-item"><small class="silver"><i class="fa fa-user" aria-hidden="true"></i> Joueur1 </small>&nbsp;<span class="badge badge-info badge-pill">3</span></li>
+            <li class="list-group-item"><small class="bronze"><i class="fa fa-user" aria-hidden="true"></i> Joueur1 </small>&nbsp; <span class="badge badge-info badge-pill">2</span></li>
+            <li class="list-group-item"><small><i class="fa fa-user" aria-hidden="true"></i> Joueur1 </small>&nbsp;<span class="badge badge-info badge-pill">2</span></li>
+            <li class="list-group-item" disabled><small>Joueur1 </small> </li>
+          </ul>
+        </div>        
+        <!-- FIN LISTE DES JOUEURS -->
+
+        <!-- DEBUT PANEL QUESTION / REPONSES -->
+        <div class="col col-md-7">
+          <div class="text-center"> 
+            <div class="card">
+              <div class="card-block">
+                <div class="row">
+                  <div class="col col-md-12 question-description">
+                    <span>Quelle est ta date de naissance ? </span>
+                  </div>
+                  <div class="row">
+
+                    <div class="col col-md-6">
+                      <button type="button" class="btn btn-secondary btn-lg answer">Réponse 1 tres tres longue</button>
+                    </div>
+                    <div class="col col-md-6">
+                      <button type="button" class="btn btn-success btn-lg answer">Réponse 2</button> 
+                    </div>
+                    <div class="w-100"></div>
+                    <div class="col col-md-6">                  
+                      <button type="button" class="btn btn-danger btn-lg answer">Réponse 3</button>
+                    </div>
+                    <div class="col col-md-6">
+                      <button type="button" class="btn btn-secondary btn-lg answer">Réponse 4</button>
+                    </div>
+                  </div>             
+                </div>
+
+                <div style="padding:1.5rem;">
+                  <div class="progress">
+                    <div class="progress-bar" role="progressbar" style="width: 100%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                  </div>
+                </div>
+                <i class="fa fa-quote-left" aria-hidden="true"></i> <span> Anecdote de la question </span><i class="fa fa-quote-right" aria-hidden="true"></i>
+              </div>
+            </div>
+          </div>
+        </div>    
+        <!-- FIN PANEL QUESTION / REPONSES -->
+
+        <!-- DEBUT CHAT -->
+        <div class="col-6 col-md-3">
+          <div class="card">
+            <h3 class="card-header">CHAT</h3>
+            <div class="card-block" style="padding-bottom: 0.5rem; padding-top: 0.5rem;">
+              <p class="card-text">
+                <div style="overflow-y: scroll; height: 23rem">
+                <small>
+                <ul class="list-unstyled">
+                  <li> <i>nickname s'est connecté</i> </li>
+                  <li> 15:20 <b>nickname</b>#1 : mon blabla </li>
+                  <li> <i>nickname s'est déconnecté</i> </li>
+                </ul>
+               
+                </small>
+                </div>
+              </p>
+              <div>
+                <input type="text" class="form-control" placeholder="votre message">
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- FIN CHAT -->
+      </div>
+    </div>
+
+    <!-- DEBUT FOOTER -->
+    <footer class="footer">
+      <div class="container">
+        <p class="text-muted text-center">Copyright © 2017 - Hussein Ait-Lahcen, Thierry Girard, Amine Ismail & Mathilde Prévost - Darwin Selection</p>
+      </div>
+    </footer> 
+    <!-- FIN FOOTER -->    
+  </body>
+</html>
