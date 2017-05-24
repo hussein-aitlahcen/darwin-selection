@@ -20,6 +20,15 @@
         socket.on('server.nickname.ack', function(message) {
             console.log(message.player);
         })
+        socket.on('server.chat.message', function(message){
+            console.log(message.name + ": " + message.content)
+        })
+        socket.on('server.player.join', function(message){
+            console.log(message.player.nickname + "#" + message.player.id + " joined.")
+        })
+        socket.on('server.player.leave', function(message){
+            console.log(message.player.nickname + "#" + message.player.id + " left.")
+        })
 
 
 
@@ -32,6 +41,12 @@
             socket.emit('client.game.answer', {
                 answerId: 0
             });
+        }
+
+        function OHCHAT() {
+            socket.emit('client.chat.message', {
+                content: "ça marche !"
+            })
         }
 
         function addMessage(message) {
