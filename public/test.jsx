@@ -150,10 +150,13 @@ class SystemMessage extends React.Component {
 
     render() {
         return (
-            <li>
-                <i>
-                    {this.props.player.nickname + " " + this.props.content}
-                </i>
+            <li className="chat-message-system">
+                <span className="chat-message-nick">
+                    {this.props.player.nickname}
+                </span>{" "}
+                <span className="chat-message-content">
+                    {this.props.content}
+                </span>
             </li>
         )
     }
@@ -162,12 +165,24 @@ class SystemMessage extends React.Component {
 class PlayerMessage extends React.Component {
     constructor(props) {
         super(props);
+        console.log(props);
     }
 
     render() {
         return (
-            <li>
-                {this.props.date + " "}<b>{this.props.player.nickname}</b>{"#" + this.props.player.id + " "} : {" " + this.props.content}
+            <li className="chat-message-player">
+                <span className="chat-message-date">
+                    {this.props.date}
+                </span>{" "}
+                <span className="chat-message-nick">
+                    {this.props.player.nickname}
+                </span>
+                <span className="chat-message-id">
+                    {"#" + this.props.player.id}
+                </span>{" : "}
+                <span className="chat-message-content">
+                    {this.props.content}
+                </span>
             </li>
         )
     }
@@ -181,8 +196,11 @@ class Chat extends React.Component {
     constructor() {
         super();
         this.state = {
-            messages: []
+            messages: [],
+            input: ''
         };
+        this.sendMessage = this.sendMessage.bind(this);
+        this.handleChange = this.handleChange.bind(this);
     }
 
     componentDidMount() {
@@ -193,12 +211,10 @@ class Chat extends React.Component {
 
     addMessage(message) {
         var messages = this.state.messages;
-
         if (this.state.messages.length > 30) {
             messages.shift();
         }
         messages.push(message);
-
         this.setState({
             messages: messages
         });
@@ -229,26 +245,48 @@ class Chat extends React.Component {
         });
     }
 
-    sendMessage(content) {
+    handleChange(e) {
+        this.setState({
+            input: e.target.value
+        });
+    }
+
+    sendMessage(e) {
+        e.preventDefault();
         socket.emit(CMSG_CHAT_MESSAGE, {
-            content: content
+            content: this.state.input
+        });
+        this.setState({
+            input: ''
         });
     }
 
     render() {
         return (
-            <ul>
-                {
-                    this.state.messages.map(function (message, i) {
-                        switch (message.type) {
-                            case MESSAGE_PLAYER:
-                                return <PlayerMessage key={i + "_" + message.date} player={message.player} content={message.content} />
-                            case MESSAGE_SYSTEM:
-                                return <SystemMessage key={i} player={message.player} content={message.content} />
-                        }
-                    })
-                }
-            </ul>
+            <div className="card">
+                <h3 className="card-header">Chat</h3>
+                <div className="chat-card card-block">
+                    <small>
+                        <ul className="chat-messages-list list-unstyled">
+                            {
+                                this.state.messages.map(function (message, i) {
+                                    switch (message.type) {
+                                        case MESSAGE_PLAYER:
+                                            return <PlayerMessage key={i + "_" + message.date} date={message.date} player={message.player} content={message.content} />
+                                        case MESSAGE_SYSTEM:
+                                            return <SystemMessage key={i} player={message.player} content={message.content} />
+                                    }
+                                })
+                            }
+                        </ul>
+                    </small>
+                    <div>
+                        <form onSubmit={this.sendMessage}>
+                            <input onChange={this.handleChange} value={this.state.input} className="form-control" type="text" placeholder="Votre message" />
+                        </form>
+                    </div>
+                </div>
+            </div>
         )
     }
 }
