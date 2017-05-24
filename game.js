@@ -8,13 +8,13 @@ var db = require('./db')
 var net = require('./net')
 var createGame = require('gameloop')
 
-var TIME_PER_QUESTION = 5
+var TIME_PER_QUESTION = 8
 var TIME_BEFORE_GAME_START = 2
 var TIME_BETWEEN_TURN = 5
 var TIME_END_GAME = 10
 var MIN_PLAYERS_TO_PLAY = 3
 var PLAYER_DEFAULT_LIFE = 3
-var TIMEOUT_EPSILON = 1.1
+var TIMEOUT_EPSILON = 1.11
 
 class Player {
     constructor(id, nickname) {
@@ -28,7 +28,7 @@ class Player {
     }
 
     getChatName() {
-        return this.nickname + "#" + this.id
+        return this.nickname + '#' + this.id
     }
 }
 
@@ -91,7 +91,7 @@ class Game {
             client.on(net.CMSG_CHAT_MESSAGE, function(message) {
                 console.log('client chat message received')
                 that.handleChatMessage(client, message)
-            })            
+            })
             client.on('disconnect', function() {
                 console.log('client left')
                 that.handlePlayerLeave(client)
@@ -142,18 +142,18 @@ class Game {
     }
 
     sendPlayerJoin(client) {
-        this.broadcast(net.SMSG_PLAYER_JOIN,{
+        this.broadcast(net.SMSG_PLAYER_JOIN, {
             player: client.player
         })
     }
 
     sendPlayerLeave(player) {
-        this.broadcast(net.SMSG_PLAYER_LEAVE,{
+        this.broadcast(net.SMSG_PLAYER_LEAVE, {
             player: player
         })
     }
 
-    sendGamePlayerList(client){
+    sendGamePlayerList(client) {
         client.emit(net.SMSG_GAME_PLAYERS, {
             players: this.clientsPlaying.map(c => c.player)
         })
@@ -174,7 +174,7 @@ class Game {
         this.sendPlayerJoin(client)
     }
 
-    handleChatMessage(client, message){
+    handleChatMessage(client, message) {
         this.broadcast(net.SMSG_CHAT_MESSAGE, {
             player: client.player,
             content: message.content
@@ -273,12 +273,11 @@ class Game {
     computeAnswerTimeout() {
         var timeout = TIME_PER_QUESTION * this.currentQuestion.getTimeoutFactor()
         console.log('question timeout: ' + timeout)
-        this.setTimer(timeout * TIMEOUT_EPSILON, GAMESTATE_TURN_END, function() {})
         return timeout
     }
 
     turnBegin() {
-        this.broadcastGamePlayersList();
+        this.broadcastGamePlayersList()
         this.resetTurn()
         this.selectRandomQuestion()
         var timeout = this.computeAnswerTimeout()
@@ -286,6 +285,7 @@ class Game {
             timeout: timeout,
             question: this.currentQuestion
         })
+        this.setTimer(timeout * TIMEOUT_EPSILON, GAMESTATE_TURN_END, function() {})
         this.goToGameState(GAMESTATE_TURN_MIDDLE)
     }
 
@@ -311,13 +311,11 @@ class Game {
             } else {
                 client.player.life--
             }
-            console.log(client.player)
         }
         for (var i = 0; i < this.clientsPlaying.length; i++) {
             var client = this.clientsPlaying[i]
             if (clientThatAnswered.filter(c => c === client).length === 0) {
                 client.player.life--
-                    console.log(client.player)
             }
         }
     }
@@ -327,7 +325,7 @@ class Game {
         this.broadcastGamePlayersList()
         var alivePlayers = this.clientsPlaying.filter(client => client.player.life > 0)
         if (alivePlayers.length > 1) {
-            this.setTimer(TIME_BETWEEN_TURN, GAMESTATE_TURN_BEGIN, function(){})
+            this.setTimer(TIME_BETWEEN_TURN, GAMESTATE_TURN_BEGIN, function() {})
             this.goToGameState(GAMESTATE_TIMER)
         } else {
             this.goToGameState(GAMESTATE_GAME_END)
@@ -336,7 +334,7 @@ class Game {
 
     gameEnd() {
         console.log('game ended')
-        this.setTimer(TIME_END_GAME, GAMESTATE_PLAYERS_WAITING, function(){})
+        this.setTimer(TIME_END_GAME, GAMESTATE_PLAYERS_WAITING, function() {})
         this.goToGameState(GAMESTATE_TIMER)
     }
 }

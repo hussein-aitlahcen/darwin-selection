@@ -6,10 +6,19 @@ class Quiz extends React.Component {
             shuffledAnswers: shuffle(props.currentQuestion.question.answers),
             answered: false,
             answer: null,
-            currentGameState: 0
+            currentGameState: 0,
+            timeBase: 0,
+            timeLeft: 0,
+            progressStyle: {
+                width: "100%"
+            }
         };
-
         this.handleClick = this.handleClick.bind(this);
+        this.handleTimeoutTick = this.handleTimeoutTick.bind(this);
+    }
+
+    componentWillUnmount() {
+        clearInterval(this.timer);
     }
 
     componentWillReceiveProps(nextProps) {
@@ -21,10 +30,27 @@ class Quiz extends React.Component {
                 shuffledAnswers: shuffle(nextProps.currentQuestion.question.answers),
                 answered: false
             })
+            this.timer = setInterval(this.handleTimeoutTick, 100);
+            this.setState({
+                timeBase: nextProps.currentQuestion.timeout,
+                timeLeft: nextProps.currentQuestion.timeout,
+                progressStyle: {
+                    width: "100%"
+                }
+            });
         }
         if (this.props.currentGameState !== nextProps.currentGameState) {
-            if (nextProps.currentGameState === GAMESTATE_TURN_END) {
-                if (this.state.shuffledAnswers.length !== 0) {
+            switch (nextProps.currentGameState) {
+                case GAMESTATE_TURN_BEGIN:
+                    // on demarre le timer
+                    console.log(this.state);
+                    break;
+
+                case GAMESTATE_TURN_END:
+                    // on stop le timer
+                    if (this.timer !== null) {
+                        clearInterval(this.timer);
+                    }
                     let goodAnswer = this.state.shuffledAnswers.find((a) => a.id === 0);
                     if (goodAnswer !== undefined) {
                         goodAnswer.color = "success";
@@ -38,19 +64,31 @@ class Quiz extends React.Component {
                             shuffledAnswers: this.state.shuffledAnswers
                         });
                     }
-                }
+                    break;
             }
         }
     }
 
-    handleClick(userAnswer) {
+    handleTimeoutTick() {
+        var newTimeLeft = Math.max(0, this.state.timeLeft - 0.1);
+        var progressPercent = Math.floor(this.state.timeLeft * 100 / this.state.timeBase);
+        var answered = this.state.answered || progressPercent === 0;
+        this.setState({
+            answered: answered,
+            timeLeft: newTimeLeft,
+            progressPercent: progressPercent,
+            progressStyle: {
+                width: progressPercent + "%"
+            }
+        });
+    }
 
+    handleClick(userAnswer) {
         userAnswer.color = "warning";
         this.setState({
             answered: true,
             answer: userAnswer
         });
-
         socket.emit(CMSG_GAME_ANSWER, {
             answerId: userAnswer.id
         });
@@ -58,16 +96,44 @@ class Quiz extends React.Component {
 
     render() {
         var that = this;
-
         return (
-            <div>
-                <h3>{this.props.currentQuestion.question.description}</h3>
-                {
-                    this.state.shuffledAnswers.map(function (answer, i) {
-                        return <button className={"btn btn-" + answer.color} disabled={that.state.answered} onClick={() => that.handleClick(answer)} key={"answer_" + answer.id}>{answer.description}</button>;
-                    })
-                }
-            </div>
+            <div className="col col-md-7 text-center">
+                <div className="card">
+                    <div className="card-block">
+                        <div className="row">
+                            <div className="col col-md-12 question-description">
+                                {this.props.currentQuestion.question.description}
+                            </div>
+                            <div className="row">
+                                {
+                                    this.state.shuffledAnswers.map(function (answer, i) {
+                                        return (
+                                            <div className="col col-md-6">
+                                                <button className={"answer btn btn-lg btn-" + answer.color} type="button" disabled={that.state.answered} onClick={() => that.handleClick(answer)} key={"answer_" + answer.id}>
+                                                    {answer.description}
+                                                </button>
+                                            </div>
+                                        );
+                                    })
+                                }
+                            </div>
+                            <div className="col col-md-12 timeout-progress progess" style={{ margin: "2em" }}>
+                                <div key={this.state.progressStyle.width} className="progress-bar" role="progressbar" style={this.state.progressStyle} >
+                                </div>
+                            </div>
+                            <div className="col col-md-12 anecdote">
+                                {this.state.answered &&
+                                    <p>
+                                        <i className="fa fa-quote-left"></i>
+                                        {" " + this.props.currentQuestion.question.anecdote + " "}
+                                        <i className="fa fa-quote-right"></i>
+                                    </p>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div >
         );
     }
 }
@@ -78,18 +144,30 @@ class UserList extends React.Component {
         super(props);
     }
 
-
     render() {
         return (
-            <div className='userList'>
-                {
-                    <ul>
-                        {this.props.playersList.map(function (user, i) {
-                            return <li key={user.life + "_" + i}>{user.id} {user.nickname} {user.life}</li>;
+            <div className="user-list col col-md-2">
+                <ul className="list-group">
+                    {
+                        this.props.playersList.map(function (user, i) {
+                            return (
+                                <li className="list-group-item" key={user.life + "_" + i}>
+                                    <span className={
+                                        i == 0 && "gold" ||
+                                        i == 1 && "silver" ||
+                                        i == 2 && "bronze"
+                                    }>
+                                        <i className="fa fa-user"></i>
+                                        {" " + user.nickname + " "}
+                                        <span className="badge badge-info badge-pill">
+                                            {user.life}
+                                        </span>
+                                    </span>
+                                </li>
+                            );
                         })
-                        }
-                    </ul>
-                }
+                    }
+                </ul>
             </div>
 
         );
@@ -128,11 +206,11 @@ class ConnectForm extends React.Component {
             <div className="container">
                 <div className="row">
                     <div className="col-md-5 centered-form">
-                        <div className='form-login'>
-                            <form className='wrapper' onSubmit={this.startConnection}>
-                                <input className='form-control input-sm chat-input' type='text' onChange={this.onNicknameChange} placeholder='Enter nickname' id='nickname' />
+                        <div className="form-login">
+                            <form className="wrapper" onSubmit={this.startConnection}>
+                                <input className="form-control input-sm chat-input" type="text" onChange={this.onNicknameChange} placeholder="Votre pseudo" id="nickname" />
                                 <br />
-                                <input className='btn btn-primary btn-md' type='submit' value='Connect' />
+                                <input className="btn btn-primary btn-md" type="submit" value="Connexion" />
                             </form>
                         </div>
                     </div>
@@ -338,7 +416,13 @@ class DarwinSelection extends React.Component {
     _updatePlayerList(data) {
         console.log('_updatePlayerList : ' + JSON.stringify(data));
         this.setState({
-            playersList: data.players
+            playersList: data.players.sort(function compare(a, b) {
+                if (a.life > b.life)
+                    return -1;
+                if (a.life < b.life)
+                    return 1;
+                return 0;
+            })
         });
     }
 
@@ -396,8 +480,8 @@ class DarwinSelection extends React.Component {
         else {
             return (
                 <div>
-                    <Quiz currentGameState={this.state.gameState} currentQuestion={this.state.currentQuestion} />
                     <UserList playersList={this.state.playersList} />
+                    <Quiz currentGameState={this.state.gameState} currentQuestion={this.state.currentQuestion} />
                     <Chat />
                 </div>
             );
