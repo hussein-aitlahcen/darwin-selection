@@ -1,0 +1,40 @@
+/* Begin User List */
+.gold {
+    color:rgb(218,165,32);
+}
+.silver {
+    color:rgb(168,168,168);
+}
+.bronze {
+    color:rgb(150,90,56);
+}    
+/* End User List */
+
+/* Begin Questions */
+.answer {
+    padding-bottom: 1rem; 
+    padding-top: 1rem;
+    margin-bottom: 0.5rem;
+    margin-top: 0.5rem;
+    width: 100%;
+    white-space: normal;
+}
+.question-description {
+    font-size: 1.75rem;
+    padding-bottom: 1.5rem;
+}
+.timeout-progress {
+    padding:1.5rem;
+    margin:2em;
+}
+/* End Questions */
+
+/* Begin Chat */
+.chat-message-system {
+    font-style: italic;
+}
+.chat-message-nick-bold {
+    font-weight: bold;
+}
+
+/* End Chat */

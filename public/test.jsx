@@ -117,7 +117,7 @@ class Quiz extends React.Component {
                                     })
                                 }
                             </div>
-                            <div className="col col-md-12 timeout-progress progess" style={{ margin: "2em" }}>
+                            <div className="col col-md-12 timeout-progress progess">
                                 <div key={this.state.progressStyle.width} className="progress-bar" role="progressbar" style={this.state.progressStyle} >
                                 </div>
                             </div>
@@ -252,7 +252,7 @@ class PlayerMessage extends React.Component {
                 <span className="chat-message-date">
                     {this.props.date}
                 </span>{" "}
-                <span className="chat-message-nick">
+                <span className="chat-message-nick-bold">
                     {this.props.player.nickname}
                 </span>
                 <span className="chat-message-id">
@@ -479,10 +479,12 @@ class DarwinSelection extends React.Component {
         }
         else {
             return (
-                <div>
-                    <UserList playersList={this.state.playersList} />
-                    <Quiz currentGameState={this.state.gameState} currentQuestion={this.state.currentQuestion} />
-                    <Chat />
+                <div className="container-fluid">
+                    <div className="row">
+                        <UserList playersList={this.state.playersList} />
+                        <Quiz currentGameState={this.state.gameState} currentQuestion={this.state.currentQuestion} />
+                        <Chat />
+                    </div>
                 </div>
             );
         }
