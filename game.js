@@ -283,6 +283,7 @@ class Game {
 
     selectRandomQuestion() {
         var maxIndex = this.questions.length
+        console.log("nombre de question " + maxIndex )
         var questionIndex = Math.floor(Math.random() * maxIndex)
         this.currentQuestion = this.questions[questionIndex]
         this.questions.splice(questionIndex, 1)
