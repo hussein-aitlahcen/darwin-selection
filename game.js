@@ -283,7 +283,7 @@ class Game {
 
     selectRandomQuestion() {
         var maxIndex = this.questions.length
-        console.log("nombre de question " + maxIndex )
+        console.log('nombre de question ' + maxIndex)
         var questionIndex = Math.floor(Math.random() * maxIndex)
         this.currentQuestion = this.questions[questionIndex]
         this.questions.splice(questionIndex, 1)
@@ -310,7 +310,7 @@ class Game {
 
     turnMiddle(dt) {
         this.updateTimer(dt)
-        if (this.currentAnswers.length === this.clientsPlaying.length) {
+        if (this.currentAnswers.length === this.clientsPlaying.filter(c => !c.player.dead).length) {
             this.goToGameState(GAMESTATE_TURN_END)
         }
     }
