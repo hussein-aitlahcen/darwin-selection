@@ -97,7 +97,7 @@ class Quiz extends React.Component {
     render() {
         var that = this;
         return (
-            <div className="col col-md-7 text-center">
+            <div className="col col-md-7 text-center quiz">
                 <div className="card">
                     <div className="card-block">
                         <div className="row">
@@ -109,7 +109,7 @@ class Quiz extends React.Component {
                                     this.state.shuffledAnswers.map(function (answer, i) {
                                         return (
                                             <div className="col col-md-6">
-                                                <button className={"answer btn btn-lg btn-" + answer.color} type="button" disabled={that.state.answered} onClick={() => that.handleClick(answer)} key={"answer_" + answer.id}>
+                                                <button className={"answer btn btn-lg btn-" + answer.color} type="button" disabled={that.state.answered || !that.props.isPlaying} onClick={() => that.handleClick(answer)} key={"answer_" + answer.id}>
                                                     {answer.description}
                                                 </button>
                                             </div>
@@ -261,7 +261,7 @@ class PlayerMessage extends React.Component {
                 <span className="chat-message-content">
                     {this.props.content}
                 </span>
-            </li>
+            </li> 
         )
     }
 }
@@ -384,7 +384,7 @@ class DarwinSelection extends React.Component {
                 }
             },
             connectedList: [],
-            playerList: [],
+            playersList: [],
             userNickname: '',
             loggedIn: false
         };
@@ -427,7 +427,9 @@ class DarwinSelection extends React.Component {
     }
 
     _updateConnectionState(data) {
-        var { userId, userNickname, userLife } = data;
+        var userId = data.player.id;
+        var userLife = data.player.life;
+        var userNickname = data.player.name;
         console.log('_updateConnectionState : ' + JSON.stringify({ userId, userNickname, userLife }));
         this.setState({
             userId: userId,
@@ -469,6 +471,18 @@ class DarwinSelection extends React.Component {
         this.setState({ connectedList: this.state.connectedList });
     }
 
+    isPlaying() {
+        var that = this;
+        var playing = false;
+        this.state.playersList.forEach(function(player) {
+            if(that.state.userId === player.id) {
+                console.log(that.state.userId + " " + player.id);
+                playing = true;
+            }
+        });
+        return playing;
+    }
+
     render() {
         if (!this.state.loggedIn) {
             return (
@@ -478,11 +492,12 @@ class DarwinSelection extends React.Component {
             );
         }
         else {
+            console.log("ISPLAYING"+this.isPlaying());
             return (
                 <div className="container-fluid">
                     <div className="row">
                         <UserList playersList={this.state.playersList} />
-                        <Quiz currentGameState={this.state.gameState} currentQuestion={this.state.currentQuestion} />
+                        <Quiz isPlaying={this.isPlaying()} currentGameState={this.state.gameState} currentQuestion={this.state.currentQuestion} />
                         <Chat />
                     </div>
                 </div>

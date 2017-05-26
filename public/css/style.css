@@ -1,10 +1,16 @@
 /* Header */
+
+#react-app {
+    padding-top: 30px;
+}
+
 .header {
 	background-color: rgb(52,52,52);
 	background-image: url('../img/header.png');
 	background-repeat: no-repeat;
 	background-position: center;
     padding-bottom: 120px;
+    margin-bottom: 0px;
 }
 
 /* Begin User List */
