@@ -47,7 +47,6 @@ class Quiz extends React.Component {
             switch (nextProps.currentGameState) {
                 case GAMESTATE_TURN_BEGIN:
                     // on demarre le timer
-                    console.log(this.state);
                     break;
 
                 case GAMESTATE_TURN_END:
@@ -100,7 +99,6 @@ class Quiz extends React.Component {
 
     render() {
         var that = this;
-        console.log(this.props.previousGameState + " " + this.props.currentGameState);
         return (
             <div className="col col-md-7 text-center quiz">
                 <div className="card">
@@ -110,7 +108,14 @@ class Quiz extends React.Component {
                                 {
                                     this.props.currentGameState == GAMESTATE_TIMER && this.props.previousGameState == GAMESTATE_GAME_END &&
                                     <div>
-                                        <h2>{this.props.winner.nickname + " est le vainqueur"}</h2>
+                                        <h2>
+                                            <span className="chat-message-nick-bold">
+                                                {this.props.winner.nickname}
+                                            </span>
+                                            <span className="chat-message-id opacity-50">
+                                                {"#" + this.props.winner.id}
+                                            </span>{" est le vainqueur"}
+                                        </h2>
                                         <span>{MSG_GAME_END}</span>
                                     </div>
                                     || this.props.currentGameState == GAMESTATE_PLAYERS_WAITING &&
@@ -131,10 +136,9 @@ class Quiz extends React.Component {
                                         <div className="row">
                                             {
                                                 this.state.shuffledAnswers.map(function (answer, i) {
-                                                    console.log(answer.id + " " + answer.description);
                                                     return (
-                                                        <div className="col col-md-6">
-                                                            <button className={"answer btn btn-lg btn-" + answer.color} type="button" disabled={that.state.answered || !that.props.isPlaying} onClick={() => that.handleClick(answer)} key={"answer_" + answer.id}>
+                                                        <div key={"answer_" + answer.id} className="col col-md-6">
+                                                            <button className={"answer btn btn-lg btn-" + answer.color} type="button" disabled={that.state.answered || !that.props.isPlaying || that.props.isDead} onClick={() => that.handleClick(answer)}>
                                                                 {answer.description}
                                                             </button>
                                                         </div>
@@ -189,7 +193,12 @@ class UserList extends React.Component {
                                         i == 2 && "bronze"
                                     }>
                                         <i className="fa fa-user"></i>
-                                        {" " + user.nickname + " "}
+                                        <span className="chat-message-nick-bold">
+                                            {" " + user.nickname}
+                                        </span>
+                                        <span className="chat-message-id opacity-50">
+                                            {"#" + user.id + " "}
+                                        </span>
                                         <span className="badge badge-info badge-pill">
                                             {user.life}
                                         </span>
@@ -241,7 +250,7 @@ class ConnectForm extends React.Component {
                             <form className="wrapper" onSubmit={this.startConnection}>
                                 <input className="form-control input-sm chat-input" type="text" onChange={this.onNicknameChange} placeholder="Votre pseudo" id="nickname" />
                                 <br />
-                                <input className="btn btn-primary btn-md" type="submit" value="Connexion" />
+                                <input className="btn btn-primary btn-md" disabled={this.state.name.length < 3} type="submit" value="Connexion" />
                             </form>
                         </div>
                     </div>
@@ -274,7 +283,6 @@ class SystemMessage extends React.Component {
 class PlayerMessage extends React.Component {
     constructor(props) {
         super(props);
-        console.log(props);
     }
 
     render() {
@@ -373,7 +381,15 @@ class Chat extends React.Component {
     render() {
         return (
             <div className="card">
-                <h3 className="card-header">Chat</h3>
+                <h3 className="card-header">Chat (
+                    <span className="chat-message-nick-bold">
+                        {this.props.userNickname}
+                    </span>
+                    <span className="chat-message-id opacity-50">
+                        {"#" + this.props.userId}
+                    </span>
+                    )
+                </h3>
                 <div className="chat-card card-block">
                     <small>
                         <ul className="chat-messages-list list-unstyled">
@@ -461,7 +477,7 @@ class DarwinSelection extends React.Component {
     _updateConnectionState(data) {
         var userId = data.player.id;
         var userLife = data.player.life;
-        var userNickname = data.player.name;
+        var userNickname = data.player.nickname;
         console.log('_updateConnectionState : ' + JSON.stringify({ userId, userNickname, userLife }));
         this.setState({
             userId: userId,
@@ -485,8 +501,6 @@ class DarwinSelection extends React.Component {
         this.setState({
             currentQuestion: question
         });
-
-        console.log('_updateGameQuestion : ' + JSON.stringify(this.state.currentQuestion));
     }
 
     _updatePlayerJoined(data) {
@@ -516,12 +530,18 @@ class DarwinSelection extends React.Component {
         return playing;
     }
 
+    isDead() {
+        var that = this;
+
+        var userPlayer = this.state.playersList.find((u) => u.id === that.state.userId);
+        return userPlayer !== undefined && userPlayer.dead;
+    }
+
     getWinner() {
         return this.state.playersList[0];
     }
 
     render() {
-        console.log(this.state.currentQuestion);
         if (!this.state.loggedIn) {
             return (
                 <div>
@@ -535,9 +555,9 @@ class DarwinSelection extends React.Component {
                     <div className="row">
                         <UserList playersList={this.state.playersList} />
                         {
-                            <Quiz isPlaying={this.isPlaying()} previousGameState={this.state.previousGameState} winner={this.getWinner()} currentGameState={this.state.gameState} currentQuestion={this.state.currentQuestion} />
+                            <Quiz isPlaying={this.isPlaying()} previousGameState={this.state.previousGameState} isDead={this.isDead()} winner={this.getWinner()} currentGameState={this.state.gameState} currentQuestion={this.state.currentQuestion} />
                         }
-                        <Chat />
+                        <Chat userId={this.state.userId} userNickname={this.state.userNickname} />
                     </div>
                 </div>
             );
