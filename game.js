@@ -308,14 +308,16 @@ class Game {
         for (var i = 0; i < this.currentAnswers.length; i++) {
             var answer = this.currentAnswers[i]
             var client = this.clientsPlaying.find(c => c.player.id === answer.playerId)
-            clientThatAnswered.push(client)
-            if (answer.answerId === 0) {
-                if (bonus) {
-                    bonus = false
-                    client.player.life++
+            if (client !== undefined) {
+                clientThatAnswered.push(client)
+                if (answer.answerId === 0) {
+                    if (bonus) {
+                        bonus = false
+                        client.player.life++
+                    }
+                } else {
+                    client.player.life--
                 }
-            } else {
-                client.player.life--
             }
         }
         for (var i = 0; i < this.clientsPlaying.length; i++) {

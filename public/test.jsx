@@ -125,9 +125,11 @@ class Quiz extends React.Component {
                                 <div className="col col-md-12 anecdote">
                                     {this.state.answered &&
                                         <p>
-                                            <i className="fa fa-quote-left"></i>
-                                            {" " + this.props.currentQuestion.question.anecdote + " "}
-                                            <i className="fa fa-quote-right"></i>
+                                            <a href={this.props.currentQuestion.question.wiki} target="_blank">
+                                                <i className="fa fa-quote-left"></i>
+                                                {" " + this.props.currentQuestion.question.anecdote + " "}
+                                                <i className="fa fa-quote-right"></i>
+                                            </a>
                                         </p>
                                     }
                                 </div>
