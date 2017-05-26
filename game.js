@@ -291,7 +291,7 @@ class Game {
             timeout: timeout,
             question: this.currentQuestion
         })
-        this.setTimer(timeout * TIMEOUT_EPSILON, GAMESTATE_TURN_END, function() {})
+        this.setTimer(timeout + TIMEOUT_EPSILON * this.clientsPlaying.length, GAMESTATE_TURN_END, function() {})
         this.goToGameState(GAMESTATE_TURN_MIDDLE)
     }
 
