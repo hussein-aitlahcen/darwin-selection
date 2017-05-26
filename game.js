@@ -359,7 +359,8 @@ class Game {
             this.setTimer(TIME_BETWEEN_TURN, GAMESTATE_TURN_BEGIN, function() {})
             this.goToGameState(GAMESTATE_TIMER)
         } else {
-            this.goToGameState(GAMESTATE_GAME_END)
+            this.setTimer(TIME_BETWEEN_TURN, GAMESTATE_GAME_END, function() {})
+            this.goToGameState(GAMESTATE_TIMER)
         }
     }
 
