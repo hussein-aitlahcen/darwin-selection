@@ -108,7 +108,14 @@ class Quiz extends React.Component {
                                 {
                                     this.props.currentGameState == GAMESTATE_TIMER && this.props.previousGameState == GAMESTATE_GAME_END &&
                                     <div>
-                                        <h2>{this.props.winner.nickname + " est le vainqueur"}</h2>
+                                        <h2>
+                                            <span className="chat-message-nick-bold">
+                                                {this.props.winner.nickname}
+                                            </span>
+                                            <span className="chat-message-id opacity-50">
+                                                {"#" + this.props.winner.id}
+                                            </span>{" est le vainqueur"}
+                                        </h2>
                                         <span>{MSG_GAME_END}</span>
                                     </div>
                                     || this.props.currentGameState == GAMESTATE_PLAYERS_WAITING &&
@@ -130,8 +137,8 @@ class Quiz extends React.Component {
                                             {
                                                 this.state.shuffledAnswers.map(function (answer, i) {
                                                     return (
-                                                        <div className="col col-md-6">
-                                                            <button className={"answer btn btn-lg btn-" + answer.color} type="button" disabled={that.state.answered || !that.props.isPlaying || that.props.isDead} onClick={() => that.handleClick(answer)} key={"answer_" + answer.id}>
+                                                        <div key={"answer_" + answer.id} className="col col-md-6">
+                                                            <button className={"answer btn btn-lg btn-" + answer.color} type="button" disabled={that.state.answered || !that.props.isPlaying || that.props.isDead} onClick={() => that.handleClick(answer)}>
                                                                 {answer.description}
                                                             </button>
                                                         </div>
@@ -186,7 +193,12 @@ class UserList extends React.Component {
                                         i == 2 && "bronze"
                                     }>
                                         <i className="fa fa-user"></i>
-                                        {" " + user.nickname + " "}
+                                        <span className="chat-message-nick-bold">
+                                            {" " + user.nickname}
+                                        </span>
+                                        <span className="chat-message-id opacity-50">
+                                            {"#" + user.id + " "}
+                                        </span>
                                         <span className="badge badge-info badge-pill">
                                             {user.life}
                                         </span>
@@ -512,8 +524,9 @@ class DarwinSelection extends React.Component {
 
     isDead() {
         var that = this;
+
         var userPlayer = this.state.playersList.find((u) => u.id === that.state.userId);
-        return userPlayer.life === 0;
+        return userPlayer !== undefined && userPlayer.dead;
     }
 
     getWinner() {

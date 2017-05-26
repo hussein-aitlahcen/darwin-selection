@@ -15,6 +15,7 @@ cd ../converted
 for f in *.csv 
 do 
     cat $f >> ../output/openquizz.csv
+    echo "" >> ../output/openquizz.csv
 done
 
 echo "Populating db"
