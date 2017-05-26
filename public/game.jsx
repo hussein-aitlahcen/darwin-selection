@@ -131,7 +131,7 @@ class Quiz extends React.Component {
                                                 this.state.shuffledAnswers.map(function (answer, i) {
                                                     return (
                                                         <div className="col col-md-6">
-                                                            <button className={"answer btn btn-lg btn-" + answer.color} type="button" disabled={that.state.answered || !that.props.isPlaying} onClick={() => that.handleClick(answer)} key={"answer_" + answer.id}>
+                                                            <button className={"answer btn btn-lg btn-" + answer.color} type="button" disabled={that.state.answered || !that.props.isPlaying || that.props.isDead} onClick={() => that.handleClick(answer)} key={"answer_" + answer.id}>
                                                                 {answer.description}
                                                             </button>
                                                         </div>
@@ -510,6 +510,12 @@ class DarwinSelection extends React.Component {
         return playing;
     }
 
+    isDead() {
+        var that = this;
+        var userPlayer = this.state.playersList.find((u) => u.id === that.state.userId);
+        return userPlayer.life === 0;
+    }
+
     getWinner() {
         return this.state.playersList[0];
     }
@@ -528,7 +534,7 @@ class DarwinSelection extends React.Component {
                     <div className="row">
                         <UserList playersList={this.state.playersList} />
                         {
-                            <Quiz isPlaying={this.isPlaying()} previousGameState={this.state.previousGameState} winner={this.getWinner()} currentGameState={this.state.gameState} currentQuestion={this.state.currentQuestion} />
+                            <Quiz isPlaying={this.isPlaying()} previousGameState={this.state.previousGameState} isDead={this.isDead()} winner={this.getWinner()} currentGameState={this.state.gameState} currentQuestion={this.state.currentQuestion} />
                         }
                         <Chat />
                     </div>
