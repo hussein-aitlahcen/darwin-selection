@@ -101,34 +101,37 @@ class Quiz extends React.Component {
                 <div className="card">
                     <div className="card-block">
                         <div className="row">
-                            <div className="col col-md-12 question-description">
-                                {this.props.currentQuestion.question.description}
-                            </div>
-                            <div className="row">
-                                {
-                                    this.state.shuffledAnswers.map(function (answer, i) {
-                                        return (
-                                            <div className="col col-md-6">
-                                                <button className={"answer btn btn-lg btn-" + answer.color} type="button" disabled={that.state.answered || !that.props.isPlaying} onClick={() => that.handleClick(answer)} key={"answer_" + answer.id}>
-                                                    {answer.description}
-                                                </button>
-                                            </div>
-                                        );
-                                    })
-                                }
-                            </div>
-                            <div className="col col-md-12 timeout-progress progess">
-                                <div key={this.state.progressStyle.width} className="progress-bar" role="progressbar" style={this.state.progressStyle} >
+                            <div className="container">
+                                <div className="col col-md-12 question-description">
+                                    {this.props.currentQuestion.question.description}
                                 </div>
-                            </div>
-                            <div className="col col-md-12 anecdote">
-                                {this.state.answered &&
-                                    <p>
-                                        <i className="fa fa-quote-left"></i>
-                                        {" " + this.props.currentQuestion.question.anecdote + " "}
-                                        <i className="fa fa-quote-right"></i>
-                                    </p>
-                                }
+                                <div className="row">
+                                    {
+                                        this.state.shuffledAnswers.map(function (answer, i) {
+                                            return (
+                                                <div className="col col-md-6">
+                                                    <button className={"answer btn btn-lg btn-" + answer.color} type="button" disabled={that.state.answered || !that.props.isPlaying} onClick={() => that.handleClick(answer)} key={"answer_" + answer.id}>
+                                                        {answer.description}
+                                                    </button>
+                                                </div>
+                                            );
+                                        })
+                                    }
+                                </div>
+                                <div className="col col-md-12 timeout-progress progess">
+                                    <div key={this.state.progressStyle.width} className="progress-bar" role="progressbar" style={this.state.progressStyle} >
+                                    </div>
+                                </div>
+                                <div className="col col-md-12 anecdote">
+                                    {this.state.answered &&
+                                        <p>
+                                            <i className="fa fa-quote-left"></i>
+                                            {" " + this.props.currentQuestion.question.anecdote + " "}
+                                            <i className="fa fa-quote-right"></i>
+                                        </p>
+                                    }
+>>>>>>> 81593a65808c4c9ecd8568d2a2f9c0cdcb552f77
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -249,13 +252,13 @@ class PlayerMessage extends React.Component {
     render() {
         return (
             <li className="chat-message-player">
-                <span className="chat-message-date">
+                <span className="chat-message-date opacity-50">
                     {this.props.date}
                 </span>{" "}
                 <span className="chat-message-nick-bold">
                     {this.props.player.nickname}
                 </span>
-                <span className="chat-message-id">
+                <span className="chat-message-id opacity-50">
                     {"#" + this.props.player.id}
                 </span>{" : "}
                 <span className="chat-message-content">

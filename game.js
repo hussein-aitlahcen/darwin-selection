@@ -14,7 +14,7 @@ var TIME_BETWEEN_TURN = 5
 var TIME_END_GAME = 10
 var MIN_PLAYERS_TO_PLAY = 3
 var PLAYER_DEFAULT_LIFE = 3
-var TIMEOUT_EPSILON = 1.11
+var TIMEOUT_EPSILON = 0.1
 
 class Player {
     constructor(id, nickname) {
@@ -193,7 +193,7 @@ class Game {
 
     handleAnswer(client, answerId) {
         if (!this.isPlaying(client)) {
-            console.log('received answer from unknow player: ' + client.player.nickname)
+            console.log('received answer from unknow player')
             return
         }
         this.currentAnswers.push({
@@ -291,7 +291,7 @@ class Game {
             timeout: timeout,
             question: this.currentQuestion
         })
-        this.setTimer(timeout * TIMEOUT_EPSILON, GAMESTATE_TURN_END, function() {})
+        this.setTimer(timeout + TIMEOUT_EPSILON * this.clientsPlaying.length, GAMESTATE_TURN_END, function() {})
         this.goToGameState(GAMESTATE_TURN_MIDDLE)
     }
 
