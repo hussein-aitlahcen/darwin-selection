@@ -130,7 +130,6 @@ class Quiz extends React.Component {
                                             <i className="fa fa-quote-right"></i>
                                         </p>
                                     }
->>>>>>> 81593a65808c4c9ecd8568d2a2f9c0cdcb552f77
                                 </div>
                             </div>
                         </div>
