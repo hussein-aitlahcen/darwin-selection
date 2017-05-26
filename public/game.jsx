@@ -47,7 +47,6 @@ class Quiz extends React.Component {
             switch (nextProps.currentGameState) {
                 case GAMESTATE_TURN_BEGIN:
                     // on demarre le timer
-                    console.log(this.state);
                     break;
 
                 case GAMESTATE_TURN_END:
@@ -100,7 +99,6 @@ class Quiz extends React.Component {
 
     render() {
         var that = this;
-        console.log(this.props.previousGameState + " " + this.props.currentGameState);
         return (
             <div className="col col-md-7 text-center quiz">
                 <div className="card">
@@ -131,7 +129,6 @@ class Quiz extends React.Component {
                                         <div className="row">
                                             {
                                                 this.state.shuffledAnswers.map(function (answer, i) {
-                                                    console.log(answer.id + " " + answer.description);
                                                     return (
                                                         <div className="col col-md-6">
                                                             <button className={"answer btn btn-lg btn-" + answer.color} type="button" disabled={that.state.answered || !that.props.isPlaying} onClick={() => that.handleClick(answer)} key={"answer_" + answer.id}>
@@ -274,7 +271,6 @@ class SystemMessage extends React.Component {
 class PlayerMessage extends React.Component {
     constructor(props) {
         super(props);
-        console.log(props);
     }
 
     render() {
@@ -485,8 +481,6 @@ class DarwinSelection extends React.Component {
         this.setState({
             currentQuestion: question
         });
-
-        console.log('_updateGameQuestion : ' + JSON.stringify(this.state.currentQuestion));
     }
 
     _updatePlayerJoined(data) {
@@ -521,7 +515,6 @@ class DarwinSelection extends React.Component {
     }
 
     render() {
-        console.log(this.state.currentQuestion);
         if (!this.state.loggedIn) {
             return (
                 <div>
