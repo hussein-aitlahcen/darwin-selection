@@ -9,6 +9,7 @@ class Quiz extends React.Component {
             currentGameState: 0,
             timeBase: 0,
             timeLeft: 0,
+            progressPercent: 100,
             progressStyle: {
                 width: "100%"
             }
@@ -30,10 +31,11 @@ class Quiz extends React.Component {
                 shuffledAnswers: shuffle(nextProps.currentQuestion.question.answers),
                 answered: false
             })
-            this.timer = setInterval(this.handleTimeoutTick, 100);
+            this.timer = setInterval(this.handleTimeoutTick, 200);
             this.setState({
                 timeBase: nextProps.currentQuestion.timeout,
                 timeLeft: nextProps.currentQuestion.timeout,
+                progressPercent: 100,
                 progressStyle: {
                     width: "100%"
                 }
@@ -70,7 +72,7 @@ class Quiz extends React.Component {
     }
 
     handleTimeoutTick() {
-        var newTimeLeft = Math.max(0, this.state.timeLeft - 0.1);
+        var newTimeLeft = Math.max(0, this.state.timeLeft - 0.2);
         var progressPercent = Math.floor(this.state.timeLeft * 100 / this.state.timeBase);
         var answered = this.state.answered || progressPercent === 0;
         this.setState({
@@ -118,21 +120,22 @@ class Quiz extends React.Component {
                                         })
                                     }
                                 </div>
-                                <div className="col col-md-12 timeout-progress progess">
-                                    <div key={this.state.progressStyle.width} className="progress-bar" role="progressbar" style={this.state.progressStyle} >
+                                <div className="row">
+                                    <div className="col col-md-12">
+                                        <progress className="timeout-progress" min="0" max="100" value={this.state.progressPercent}></progress>
                                     </div>
                                 </div>
-                                <div className="col col-md-12 anecdote">
-                                    {this.state.answered &&
-                                        <p>
-                                            <a href={this.props.currentQuestion.question.wiki} target="_blank">
-                                                <i className="fa fa-quote-left"></i>
-                                                {" " + this.props.currentQuestion.question.anecdote + " "}
-                                                <i className="fa fa-quote-right"></i>
-                                            </a>
-                                        </p>
-                                    }
-                                </div>
+                            </div>
+                            <div className="col col-md-12 anecdote">
+                                {this.state.answered &&
+                                    <p>
+                                        <a href={this.props.currentQuestion.question.wiki} target="_blank">
+                                            <i className="fa fa-quote-left"></i>
+                                            {" " + this.props.currentQuestion.question.anecdote + " "}
+                                            <i className="fa fa-quote-right"></i>
+                                        </a>
+                                    </p>
+                                }
                             </div>
                         </div>
                     </div>
@@ -265,7 +268,7 @@ class PlayerMessage extends React.Component {
                 <span className="chat-message-content">
                     {this.props.content}
                 </span>
-            </li> 
+            </li>
         )
     }
 }
@@ -478,8 +481,8 @@ class DarwinSelection extends React.Component {
     isPlaying() {
         var that = this;
         var playing = false;
-        this.state.playersList.forEach(function(player) {
-            if(that.state.userId === player.id) {
+        this.state.playersList.forEach(function (player) {
+            if (that.state.userId === player.id) {
                 console.log(that.state.userId + " " + player.id);
                 playing = true;
             }
@@ -496,7 +499,7 @@ class DarwinSelection extends React.Component {
             );
         }
         else {
-            console.log("ISPLAYING"+this.isPlaying());
+            console.log("ISPLAYING" + this.isPlaying());
             return (
                 <div className="container-fluid">
                     <div className="row">

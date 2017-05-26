@@ -2,6 +2,7 @@
     padding-top: 30px;
 }
 
+
 /* Begin Common */
 
 .opacity-50 {
@@ -61,9 +62,14 @@
     padding-bottom: 1.5rem;
 }
 
+progress::-webkit-progress-value {
+    transition: width 0.5s linear
+}
+
 .timeout-progress {
-    padding: 1.5rem;
-    margin: 2em;
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
+    width: 100%;
 }
 
 
