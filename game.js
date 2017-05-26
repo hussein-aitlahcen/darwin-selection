@@ -10,7 +10,7 @@ var createGame = require('gameloop')
 
 var TIME_PER_QUESTION = 8
 var TIME_BEFORE_GAME_START = 2
-var TIME_BETWEEN_TURN = 5
+var TIME_BETWEEN_TURN = 7
 var TIME_END_GAME = 10
 var MIN_PLAYERS_TO_PLAY = 3
 var PLAYER_DEFAULT_LIFE = 3
@@ -308,7 +308,7 @@ class Game {
         var bonus = true
         var playerThatAnswered = []
         var wrongAnswers = 0
-        var alivePlayers = this.clientsPlaying.filter(c => !c.dead)
+        var alivePlayers = this.clientsPlaying.filter(c => !c.player.dead)
 
         for (var i = 0; i < this.currentAnswers.length; i++) {
             var answer = this.currentAnswers[i]
@@ -344,8 +344,8 @@ class Game {
 
         for (var i = 0; i < alivePlayers.length; i++) {
             var client = alivePlayers[i]
-            if (client.life === 0)
-                client.dead = true
+            if (client.player.life === 0)
+                client.player.dead = true
         }
     }
 
