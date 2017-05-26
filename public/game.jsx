@@ -381,7 +381,15 @@ class Chat extends React.Component {
     render() {
         return (
             <div className="card">
-                <h3 className="card-header">Chat</h3>
+                <h3 className="card-header">Chat (
+                    <span className="chat-message-nick-bold">
+                        {this.props.userNickname}
+                    </span>
+                    <span className="chat-message-id opacity-50">
+                        {"#" + this.props.userId}
+                    </span>
+                    )
+                </h3>
                 <div className="chat-card card-block">
                     <small>
                         <ul className="chat-messages-list list-unstyled">
@@ -469,7 +477,7 @@ class DarwinSelection extends React.Component {
     _updateConnectionState(data) {
         var userId = data.player.id;
         var userLife = data.player.life;
-        var userNickname = data.player.name;
+        var userNickname = data.player.nickname;
         console.log('_updateConnectionState : ' + JSON.stringify({ userId, userNickname, userLife }));
         this.setState({
             userId: userId,
@@ -549,7 +557,7 @@ class DarwinSelection extends React.Component {
                         {
                             <Quiz isPlaying={this.isPlaying()} previousGameState={this.state.previousGameState} isDead={this.isDead()} winner={this.getWinner()} currentGameState={this.state.gameState} currentQuestion={this.state.currentQuestion} />
                         }
-                        <Chat userNickname={this.state.userNickname} />
+                        <Chat userId={this.state.userId} userNickname={this.state.userNickname} />
                     </div>
                 </div>
             );
