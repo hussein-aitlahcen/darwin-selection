@@ -313,15 +313,17 @@ class Game {
         for (var i = 0; i < this.currentAnswers.length; i++) {
             var answer = this.currentAnswers[i]
             var client = alivePlayers.find(c => c.player.id === answer.playerId)
-            playerThatAnswered.push(client)
-            if (answer.answerId === 0) {
-                if (bonus) {
-                    bonus = false
-                    client.player.life++
+            if(client !== undefined) {
+                playerThatAnswered.push(client)
+                if (answer.answerId === 0) {
+                    if (bonus) {
+                        bonus = false
+                        client.player.life++
+                    }
+                } else {
+                    client.player.life--
+                    wrongAnswers++
                 }
-            } else {
-                client.player.life--
-                wrongAnswers++
             }
         }
         
