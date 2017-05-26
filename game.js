@@ -26,7 +26,7 @@ class Player {
 
     gameStart() {
         this.life = PLAYER_DEFAULT_LIFE
-        this.game = false
+        this.dead = false
     }
 
     getChatName() {
@@ -88,22 +88,22 @@ class Game {
         let that = this
         this.core.on('update', dt => that.update(dt))
         this.core.start()
-        io.on('connection', function(client) {
+        io.on('connection', function (client) {
             console.log('client joined')
             that.handlePlayerJoin(client)
-            client.on(net.CMSG_NICKNAME, function(message) {
+            client.on(net.CMSG_NICKNAME, function (message) {
                 console.log('client nickname received -> ' + message.nickname)
                 that.handleNicknameRequest(client, message.nickname)
             })
-            client.on(net.CMSG_GAME_ANSWER, function(message) {
+            client.on(net.CMSG_GAME_ANSWER, function (message) {
                 console.log('client answered')
                 that.handleAnswer(client, message.answerId)
             })
-            client.on(net.CMSG_CHAT_MESSAGE, function(message) {
+            client.on(net.CMSG_CHAT_MESSAGE, function (message) {
                 console.log('client chat message received')
                 that.handleChatMessage(client, message)
             })
-            client.on('disconnect', function() {
+            client.on('disconnect', function () {
                 console.log('client left')
                 that.handlePlayerLeave(client)
             })
@@ -241,7 +241,7 @@ class Game {
 
     setTimer(time, nextState, callback) {
         var that = this
-        this.timer = new Timer(time, function() {
+        this.timer = new Timer(time, function () {
             callback()
             that.goToGameState(nextState)
         })
@@ -250,7 +250,7 @@ class Game {
     waitingPlayers() {
         var realPlayers = this.clients.filter(c => c.player !== null)
         if (realPlayers.length >= MIN_PLAYERS_TO_PLAY) {
-            this.setTimer(TIME_BEFORE_GAME_START, GAMESTATE_GAME_START, function() {})
+            this.setTimer(TIME_BEFORE_GAME_START, GAMESTATE_GAME_START, function () { })
             this.goToGameState(GAMESTATE_TIMER)
         }
     }
@@ -271,7 +271,7 @@ class Game {
         this.questions = this.baseQuestions
         this.clientsPlaying.splice(0, this.clientsPlaying.length)
         this.clientsPlaying = this.clients.filter(c => c.player !== null)
-        this.clientsPlaying.forEach(function(client) {
+        this.clientsPlaying.forEach(function (client) {
             client.player.gameStart()
         }, this)
         this.goToGameState(GAMESTATE_TURN_BEGIN)
@@ -283,7 +283,7 @@ class Game {
 
     selectRandomQuestion() {
         var maxIndex = this.questions.length
-        console.log('nombre de question ' + maxIndex)
+
         var questionIndex = Math.floor(Math.random() * maxIndex)
         this.currentQuestion = this.questions[questionIndex]
         this.questions.splice(questionIndex, 1)
@@ -304,7 +304,7 @@ class Game {
             timeout: timeout,
             question: this.currentQuestion
         })
-        this.setTimer(timeout + TIMEOUT_EPSILON * this.clientsPlaying.length, GAMESTATE_TURN_END, function() {})
+        this.setTimer(timeout + TIMEOUT_EPSILON * this.clientsPlaying.length, GAMESTATE_TURN_END, function () { })
         this.goToGameState(GAMESTATE_TURN_MIDDLE)
     }
 
@@ -332,6 +332,7 @@ class Game {
                         client.player.gainLife()
                     }
                 } else {
+
                     client.player.loseLife()
                     wrongAnswers++
                 }
@@ -341,6 +342,7 @@ class Game {
         for (var i = 0; i < alivePlayers.length; i++) {
             var client = alivePlayers[i]
             if (playerThatAnswered.filter(c => c === client).length === 0) {
+
                 client.player.loseLife()
                 wrongAnswers++
             }
@@ -365,24 +367,24 @@ class Game {
         this.broadcastGamePlayersList()
         var alivePlayers = this.clientsPlaying.filter(client => client.player.life > 0)
         if (alivePlayers.length > 1) {
-            this.setTimer(TIME_BETWEEN_TURN, GAMESTATE_TURN_BEGIN, function() {})
+            this.setTimer(TIME_BETWEEN_TURN, GAMESTATE_TURN_BEGIN, function () { })
             this.goToGameState(GAMESTATE_TIMER)
         } else {
-            this.setTimer(TIME_BETWEEN_TURN, GAMESTATE_GAME_END, function() {})
+            this.setTimer(TIME_BETWEEN_TURN, GAMESTATE_GAME_END, function () { })
             this.goToGameState(GAMESTATE_TIMER)
         }
     }
 
     gameEnd() {
         console.log('game ended')
-        this.setTimer(TIME_END_GAME, GAMESTATE_PLAYERS_WAITING, function() {})
+        this.setTimer(TIME_END_GAME, GAMESTATE_PLAYERS_WAITING, function () { })
         this.goToGameState(GAMESTATE_TIMER)
     }
 }
 
-db.connection.once('open', function() {
+db.connection.once('open', function () {
     console.log('sucessfully connected to database')
-    db.Question.find({}, function(error, questions) {
+    db.Question.find({}, function (error, questions) {
         new Game(questions).start()
     })
 })
@@ -391,6 +393,6 @@ server.listen(8080)
 
 app.use(express.static('public'))
 
-app.get('/', function(req, res) {
+app.get('/', function (req, res) {
     res.sendfile('public/index.html')
 })
