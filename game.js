@@ -14,7 +14,7 @@ var TIME_BETWEEN_TURN = 7
 var TIME_END_GAME = 10
 var MIN_PLAYERS_TO_PLAY = 3
 var PLAYER_DEFAULT_LIFE = 3
-var TIMEOUT_EPSILON = 0.1
+var TIMEOUT_EPSILON = 0.2
 
 class Player {
     constructor(id, nickname) {
@@ -66,6 +66,7 @@ class Game {
         this.clientsPlaying = []
         this.timer = null
         this.nextPlayerId = 0
+        this.baseQuestions = questions
         this.questions = questions
         this.currentQuestion = null
         this.currentAnswers = []
@@ -259,6 +260,7 @@ class Game {
 
     gameStart() {
         console.log('game started')
+        this.questions = this.baseQuestions
         this.clientsPlaying.splice(0, this.clientsPlaying.length)
         this.clientsPlaying = this.clients.filter(c => c.player !== null)
         this.clientsPlaying.forEach(function(client) {
