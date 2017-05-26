@@ -21,10 +21,12 @@ class Player {
         this.id = id
         this.nickname = nickname
         this.life = PLAYER_DEFAULT_LIFE
+        this.dead = false
     }
 
     gameStart() {
         this.life = PLAYER_DEFAULT_LIFE
+        this.game = false
     }
 
     getChatName() {
@@ -304,11 +306,14 @@ class Game {
 
     computePlayersScore() {
         var bonus = true
-        var clientThatAnswered = []
+        var playerThatAnswered = []
+        var wrongAnswers = 0
+        var alivePlayers = this.clientsPlaying.filter(c => ! c.dead)
+
         for (var i = 0; i < this.currentAnswers.length; i++) {
             var answer = this.currentAnswers[i]
-            var client = this.clientsPlaying.find(c => c.player.id === answer.playerId)
-            clientThatAnswered.push(client)
+            var client = alivePlayers.find(c => c.player.id === answer.playerId)
+            playerThatAnswered.push(client)
             if (answer.answerId === 0) {
                 if (bonus) {
                     bonus = false
@@ -316,13 +321,28 @@ class Game {
                 }
             } else {
                 client.player.life--
+                wrongAnswers++
             }
         }
-        for (var i = 0; i < this.clientsPlaying.length; i++) {
-            var client = this.clientsPlaying[i]
-            if (clientThatAnswered.filter(c => c === client).length === 0) {
+        
+        for (var i = 0; i < alivePlayers.length; i++) {
+            var client = alivePlayers[i]
+            if (playerThatAnswered.filter(c => c === client).length === 0) {
                 client.player.life--
+                wrongAnswers++
             }
+        }
+
+        if(wrongAnswers === alivePlayers.length){
+            for (var i = 0; i < alivePlayers.length; i++) {
+                alivePlayers[i].life++                      
+            }
+        }
+
+        for (var i = 0; i < alivePlayers.length; i++) {
+            var client = alivePlayers[i]
+            if(client.life === 0)
+                client.dead = true                    
         }
     }
 
