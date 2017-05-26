@@ -159,6 +159,12 @@ class Game {
         })
     }
 
+    sendGameState(client) {
+        client.emit(net.SMSG_GAME_STATE_UPDATE, {
+            state: this.state
+        })
+    }
+
     broadcastGamePlayersList() {
         this.broadcast(net.SMSG_GAME_PLAYERS, {
             players: this.clientsPlaying.map(c => c.player)
@@ -200,18 +206,18 @@ class Game {
         client.player = null
         this.clients.push(client)
         this.sendConnectedPlayers(client)
-        client.emit(net.SMSG_GAME_STATE_UPDATE, {
-            state: this.state
-        })
+        this.sendGameState(client)
         this.sendGamePlayerList(client)
     }
 
     handlePlayerLeave(client) {
         this.clients = this.clients.filter(c => c !== client)
         this.clientsPlaying = this.clientsPlaying.filter(c => c !== client)
-        this.broadcast(net.SMSG_PLAYER_LEAVE, {
-            player: client.player
-        })
+        if (client.player !== null) {
+            this.broadcast(net.SMSG_PLAYER_LEAVE, {
+                player: client.player
+            })
+        }
     }
 
     goToGameState(state) {
