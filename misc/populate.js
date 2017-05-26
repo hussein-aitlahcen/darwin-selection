@@ -2,7 +2,7 @@ var conn = new Mongo()
 var db = conn.getDB('darwin')
 
 db.createCollection('questions')
-db.question.remove({})
+db.questions.remove({})
 
 var questionId = 0
 
@@ -10,24 +10,26 @@ var content = cat('output/openquizz.csv')
 var lines = content.split('\n')
 for (var i = 0; i < lines.length; i++) {
     var line = lines[i]
+    if (line === "")
+        continue
     var entries = line.split(';')
     var description = entries[1]
     var answers = [{
-            id: 0,
-            description: entries[2]
-        },
-        {
-            id: 1,
-            description: entries[3]
-        },
-        {
-            id: 2,
-            description: entries[4]
-        },
-        {
-            id: 3,
-            description: entries[5]
-        }
+        id: 0,
+        description: entries[2]
+    },
+    {
+        id: 1,
+        description: entries[3]
+    },
+    {
+        id: 2,
+        description: entries[4]
+    },
+    {
+        id: 3,
+        description: entries[5]
+    }
     ]
     var difficulty = entries[6]
     var anecdote = entries[7]
