@@ -32,6 +32,14 @@ class Player {
     getChatName() {
         return this.nickname + '#' + this.id
     }
+
+    gainLife() {
+        this.life = Math.min(PLAYER_DEFAULT_LIFE, this.life + 1)
+    }
+
+    loseLife() {
+        this.life = Math.max(0, this.life - 1)
+    }
 }
 
 var GAMESTATE_PLAYERS_WAITING = 1
@@ -320,11 +328,11 @@ class Game {
                 if (answer.answerId === 0) {
                     if (bonus) {
                         bonus = false
-                        client.player.life++
+                        client.player.gainLife()
                     }
                 } else {
-                    client.player.life--
-                        wrongAnswers++
+                    client.player.loseLife()
+                    wrongAnswers++
                 }
             }
         }
@@ -332,15 +340,15 @@ class Game {
         for (var i = 0; i < alivePlayers.length; i++) {
             var client = alivePlayers[i]
             if (playerThatAnswered.filter(c => c === client).length === 0) {
-                client.player.life--
-                    wrongAnswers++
+                client.player.loseLife()
+                wrongAnswers++
             }
         }
 
         if (wrongAnswers === alivePlayers.length) {
             for (var i = 0; i < alivePlayers.length; i++) {
                 var client = alivePlayers[i]
-                client.player.life++
+                client.player.gainLife()
             }
         }
 
