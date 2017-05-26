@@ -238,7 +238,7 @@ class ConnectForm extends React.Component {
                             <form className="wrapper" onSubmit={this.startConnection}>
                                 <input className="form-control input-sm chat-input" type="text" onChange={this.onNicknameChange} placeholder="Votre pseudo" id="nickname" />
                                 <br />
-                                <input className="btn btn-primary btn-md" type="submit" value="Connexion" />
+                                <input className="btn btn-primary btn-md" disabled={this.state.name.length < 3} type="submit" value="Connexion" />
                             </form>
                         </div>
                     </div>
@@ -536,7 +536,7 @@ class DarwinSelection extends React.Component {
                         {
                             <Quiz isPlaying={this.isPlaying()} previousGameState={this.state.previousGameState} isDead={this.isDead()} winner={this.getWinner()} currentGameState={this.state.gameState} currentQuestion={this.state.currentQuestion} />
                         }
-                        <Chat />
+                        <Chat userNickname={this.state.userNickname} />
                     </div>
                 </div>
             );
