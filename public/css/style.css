@@ -1,11 +1,16 @@
-<<<<<<< HEAD
 /* Header */
+.header {
+	background-color: rgb(52,52,52);
+	background-image: url('../img/header.png');
+	background-repeat: no-repeat;
+	background-position: center;
+    padding-bottom: 120px;
+}
 
 #react-app {
     padding-top: 30px;
 }
 
-=======
 /* Begin Common */
 
 .opacity-50 {
