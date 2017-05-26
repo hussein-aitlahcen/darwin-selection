@@ -532,7 +532,6 @@ class DarwinSelection extends React.Component {
 
     isDead() {
         var that = this;
-
         var userPlayer = this.state.playersList.find((u) => u.id === that.state.userId);
         return userPlayer !== undefined && userPlayer.dead;
     }
