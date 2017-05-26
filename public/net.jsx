@@ -24,6 +24,10 @@ var GAMESTATE_TURN_END = 5;
 var GAMESTATE_GAME_END = 6;  
 var GAMESTATE_TIMER = 7;
 
+var MSG_PLAYERS_WAITING = "En attente de joueurs";
+var MSG_NO_QUESTION = "La partie va commencer dans un instant";
+var MSG_GAME_END = "Une nouvelle partie va commencer";
+
 function shuffle(a) {
     var j, x, i;
     for (i = a.length; i; i--) {
@@ -33,8 +37,4 @@ function shuffle(a) {
         a[j] = x;
     }
     return a;
-}
-
-function SEND() {
-    socket.emit(CMSG_CHAT_MESSAGE,{content : "test"});
 }

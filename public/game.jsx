@@ -6,7 +6,6 @@ class Quiz extends React.Component {
             shuffledAnswers: shuffle(props.currentQuestion.question.answers),
             answered: false,
             answer: null,
-            currentGameState: 0,
             timeBase: 0,
             timeLeft: 0,
             progressPercent: 100,
@@ -23,6 +22,9 @@ class Quiz extends React.Component {
     }
 
     componentWillReceiveProps(nextProps) {
+        if (nextProps.currentGameState === GAMESTATE_GAME_END) {
+            nextProps.currentQuestion.timeout = null;
+        }
         if (this.props.currentQuestion.question.id !== nextProps.currentQuestion.question.id) {
             nextProps.currentQuestion.question.answers.forEach(function (answer) {
                 answer.color = "secondary";
@@ -98,49 +100,71 @@ class Quiz extends React.Component {
 
     render() {
         var that = this;
+        console.log(this.props.previousGameState + " " + this.props.currentGameState);
         return (
             <div className="col col-md-7 text-center quiz">
                 <div className="card">
                     <div className="card-block">
                         <div className="row">
                             <div className="container">
-                                <div className="col col-md-12 question-description">
-                                    {this.props.currentQuestion.question.description}
-                                </div>
-                                <div className="row">
-                                    {
-                                        this.state.shuffledAnswers.map(function (answer, i) {
-                                            return (
-                                                <div className="col col-md-6">
-                                                    <button className={"answer btn btn-lg btn-" + answer.color} type="button" disabled={that.state.answered || !that.props.isPlaying} onClick={() => that.handleClick(answer)} key={"answer_" + answer.id}>
-                                                        {answer.description}
-                                                    </button>
-                                                </div>
-                                            );
-                                        })
-                                    }
-                                </div>
-                                <div className="row">
-                                    <div className="col col-md-12">
-                                        <progress className="timeout-progress" min="0" max="100" value={this.state.progressPercent}></progress>
+                                {
+                                    this.props.currentGameState == GAMESTATE_TIMER && this.props.previousGameState == GAMESTATE_GAME_END &&
+                                    <div>
+                                        <h2>{this.props.winner.nickname + " est le vainqueur"}</h2>
+                                        <span>{MSG_GAME_END}</span>
                                     </div>
-                                </div>
-                            </div>
-                            <div className="col col-md-12 anecdote">
-                                {this.state.answered &&
-                                    <p>
-                                        <a href={this.props.currentQuestion.question.wiki} target="_blank">
-                                            <i className="fa fa-quote-left"></i>
-                                            {" " + this.props.currentQuestion.question.anecdote + " "}
-                                            <i className="fa fa-quote-right"></i>
-                                        </a>
-                                    </p>
+                                    || this.props.currentGameState == GAMESTATE_PLAYERS_WAITING &&
+                                    <div>
+                                        <i className="fa fa-spinner fa-spin fa-3x fa-fw"></i>
+                                        <span>{MSG_PLAYERS_WAITING}</span>
+                                    </div>
+                                    || this.props.currentQuestion.timeout == null &&
+                                    <div>
+                                        <i className="fa fa-spinner fa-spin fa-3x fa-fw"></i>
+                                        <span>{MSG_NO_QUESTION}</span>
+                                    </div>
+                                    || this.props.currentQuestion != null &&
+                                    <div>
+                                        <div className="col col-md-12 question-description">
+                                            {this.props.currentQuestion.question.description}
+                                        </div>
+                                        <div className="row">
+                                            {
+                                                this.state.shuffledAnswers.map(function (answer, i) {
+                                                    console.log(answer.id + " " + answer.description);
+                                                    return (
+                                                        <div className="col col-md-6">
+                                                            <button className={"answer btn btn-lg btn-" + answer.color} type="button" disabled={that.state.answered || !that.props.isPlaying} onClick={() => that.handleClick(answer)} key={"answer_" + answer.id}>
+                                                                {answer.description}
+                                                            </button>
+                                                        </div>
+                                                    );
+                                                })
+                                            }
+                                        </div>
+                                        <div className="row">
+                                            <div className="col col-md-12">
+                                                <progress className="timeout-progress" min="0" max="100" value={this.state.progressPercent}></progress>
+                                            </div>
+                                        </div>
+                                        <div className="col col-md-12 anecdote">
+                                            {this.state.answered &&
+                                                <p>
+                                                    <a href={this.props.currentQuestion.question.wiki} target="_blank">
+                                                        <i className="fa fa-quote-left"></i>
+                                                        {" " + this.props.currentQuestion.question.anecdote + " "}
+                                                        <i className="fa fa-quote-right"></i>
+                                                    </a>
+                                                </p>
+                                            }
+                                        </div>
+                                    </div>
                                 }
                             </div>
                         </div>
                     </div>
                 </div>
-            </div >
+            </div>
         );
     }
 }
@@ -382,7 +406,7 @@ class DarwinSelection extends React.Component {
         super();
         this.state = {
             currentQuestion: {
-                timeout: 10,
+                timeout: null,
                 question: {
                     description: '',
                     answers: [{
@@ -390,6 +414,7 @@ class DarwinSelection extends React.Component {
                     }]
                 }
             },
+            currentGameState: 0,
             connectedList: [],
             playersList: [],
             userNickname: '',
@@ -448,8 +473,10 @@ class DarwinSelection extends React.Component {
 
     _updateGameState(data) {
         console.log('_updateGameState : ' + JSON.stringify(data));
+        var previousGameState = this.state.gameState;
         this.setState({
-            gameState: data.state
+            gameState: data.state,
+            previousGameState: previousGameState
         });
     }
 
@@ -483,14 +510,18 @@ class DarwinSelection extends React.Component {
         var playing = false;
         this.state.playersList.forEach(function (player) {
             if (that.state.userId === player.id) {
-                console.log(that.state.userId + " " + player.id);
                 playing = true;
             }
         });
         return playing;
     }
 
+    getWinner() {
+        return this.state.playersList[0];
+    }
+
     render() {
+        console.log(this.state.currentQuestion);
         if (!this.state.loggedIn) {
             return (
                 <div>
@@ -499,12 +530,13 @@ class DarwinSelection extends React.Component {
             );
         }
         else {
-            console.log("ISPLAYING" + this.isPlaying());
             return (
                 <div className="container-fluid">
                     <div className="row">
                         <UserList playersList={this.state.playersList} />
-                        <Quiz isPlaying={this.isPlaying()} currentGameState={this.state.gameState} currentQuestion={this.state.currentQuestion} />
+                        {
+                            <Quiz isPlaying={this.isPlaying()} previousGameState={this.state.previousGameState} winner={this.getWinner()} currentGameState={this.state.gameState} currentQuestion={this.state.currentQuestion} />
+                        }
                         <Chat />
                     </div>
                 </div>
