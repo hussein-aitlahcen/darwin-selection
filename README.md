@@ -1,7 +1,6 @@
 # Darwin Selection  
 ###### AIT-LAHCEN Hussein, GIRARD Thierry, PREVOST Mathilde, RECUERDA Maxime & ISMAIL Amine 
-#
-#
+
 #### 1. Mise en place de l'environnement de développement
 
 1. Installer NodeJS & NPM : *sudo apt-get install nodejs-legacy*
