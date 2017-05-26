@@ -250,7 +250,7 @@ class ConnectForm extends React.Component {
                             <form className="wrapper" onSubmit={this.startConnection}>
                                 <input className="form-control input-sm chat-input" type="text" onChange={this.onNicknameChange} placeholder="Votre pseudo" id="nickname" />
                                 <br />
-                                <input className="btn btn-primary btn-md" type="submit" value="Connexion" />
+                                <input className="btn btn-primary btn-md" disabled={this.state.name.length < 3} type="submit" value="Connexion" />
                             </form>
                         </div>
                     </div>
@@ -381,7 +381,15 @@ class Chat extends React.Component {
     render() {
         return (
             <div className="card">
-                <h3 className="card-header">Chat</h3>
+                <h3 className="card-header">Chat (
+                    <span className="chat-message-nick-bold">
+                        {this.props.userNickname}
+                    </span>
+                    <span className="chat-message-id opacity-50">
+                        {"#" + this.props.userId}
+                    </span>
+                    )
+                </h3>
                 <div className="chat-card card-block">
                     <small>
                         <ul className="chat-messages-list list-unstyled">
@@ -469,7 +477,7 @@ class DarwinSelection extends React.Component {
     _updateConnectionState(data) {
         var userId = data.player.id;
         var userLife = data.player.life;
-        var userNickname = data.player.name;
+        var userNickname = data.player.nickname;
         console.log('_updateConnectionState : ' + JSON.stringify({ userId, userNickname, userLife }));
         this.setState({
             userId: userId,
@@ -549,7 +557,7 @@ class DarwinSelection extends React.Component {
                         {
                             <Quiz isPlaying={this.isPlaying()} previousGameState={this.state.previousGameState} isDead={this.isDead()} winner={this.getWinner()} currentGameState={this.state.gameState} currentQuestion={this.state.currentQuestion} />
                         }
-                        <Chat />
+                        <Chat userId={this.state.userId} userNickname={this.state.userNickname} />
                     </div>
                 </div>
             );
