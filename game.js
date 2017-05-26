@@ -308,12 +308,12 @@ class Game {
         var bonus = true
         var playerThatAnswered = []
         var wrongAnswers = 0
-        var alivePlayers = this.clientsPlaying.filter(c => ! c.dead)
+        var alivePlayers = this.clientsPlaying.filter(c => !c.dead)
 
         for (var i = 0; i < this.currentAnswers.length; i++) {
             var answer = this.currentAnswers[i]
             var client = alivePlayers.find(c => c.player.id === answer.playerId)
-            if(client !== undefined) {
+            if (client !== undefined) {
                 playerThatAnswered.push(client)
                 if (answer.answerId === 0) {
                     if (bonus) {
@@ -322,29 +322,30 @@ class Game {
                     }
                 } else {
                     client.player.life--
-                    wrongAnswers++
+                        wrongAnswers++
                 }
             }
         }
-        
+
         for (var i = 0; i < alivePlayers.length; i++) {
             var client = alivePlayers[i]
             if (playerThatAnswered.filter(c => c === client).length === 0) {
                 client.player.life--
-                wrongAnswers++
+                    wrongAnswers++
             }
         }
 
-        if(wrongAnswers === alivePlayers.length){
+        if (wrongAnswers === alivePlayers.length) {
             for (var i = 0; i < alivePlayers.length; i++) {
-                alivePlayers[i].life++                      
+                var client = alivePlayers[i]
+                client.player.life++
             }
         }
 
         for (var i = 0; i < alivePlayers.length; i++) {
             var client = alivePlayers[i]
-            if(client.life === 0)
-                client.dead = true                    
+            if (client.life === 0)
+                client.dead = true
         }
     }
 
