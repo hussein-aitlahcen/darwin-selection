@@ -10,7 +10,7 @@ var createGame = require('gameloop')
 
 var TIME_PER_QUESTION = 8
 var TIME_BEFORE_GAME_START = 2
-var TIME_BETWEEN_TURN = 5
+var TIME_BETWEEN_TURN = 10
 var TIME_END_GAME = 10
 var MIN_PLAYERS_TO_PLAY = 3
 var PLAYER_DEFAULT_LIFE = 3
